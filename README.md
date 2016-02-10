@@ -15,35 +15,15 @@ Basic functions -
 
 Heirarchy Structure - 
 
-src
- |
- |
- main
-   |
-   |
-   |--webapp
-   | |
-   | |
-   | thugcode
-   |    |
-   |    |
-   |    |--app
-   |    |   |
-   |    |   |
-   |    |   components/*.html (all html files should be here)
-   |    |
-   |    |
-   |    |--assets
-   |        |
-   |        |
-   |        |--css (all css files should be here)
-   |        |
-   |        |--js (all javascript files should be here)
-   |        |
-   |        |--img (all images should be here)
-   |        |
-   |        |--lib (all external libraries like jquery, angular etc should be here)
-   |
-   |
-   |
-   |--java (it will contain all java related code)
+ - src
+	 - main
+		 - webapp
+			 - thugcode
+				 - app
+					 - components (All .html files should be here)
+				 - assets
+					 - css (all .css files will be here)
+					 - js (all js files will be here)
+					 - img (all img files will be here)
+					 - lib (all external libraries like jquery, angular etc should be here)
+		 - Java (It will contain all of our server side (Java) files.
