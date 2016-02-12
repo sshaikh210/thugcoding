@@ -15,6 +15,7 @@ public interface UserRepository extends CrudRepository<User, Long> {
     User findOneByEmail(String email);
     User findOneByUserNameOrEmail(String username, String email);
     User findOneByToken(String token);
+    UserRepository findOneByActive(Long id,Boolean active);
     
     @Modifying
     @Transactional

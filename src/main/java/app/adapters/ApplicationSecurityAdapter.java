@@ -49,7 +49,7 @@ public class ApplicationSecurityAdapter extends WebSecurityConfigurerAdapter {
             .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login")
         .and()
             .rememberMe().key(applicationSecret)
-            .tokenValiditySeconds(31536000);
+            .tokenValiditySeconds(31536000).and().csrf().disable();
     }
     
     @Override

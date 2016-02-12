@@ -1,5 +1,8 @@
 package app.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Cascade;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.*;
@@ -35,8 +38,9 @@ public class Status extends Model {
     @OneToOne(optional= false)
     @JoinColumn(name = "Users_Technologies", referencedColumnName = "id")
     @RestResource(exported = false)
+    @JsonBackReference
     private User_Technology user_technology;
-
+//    @JsonIgnore
     public User_Technology getUser_technology() {
         return user_technology;
     }

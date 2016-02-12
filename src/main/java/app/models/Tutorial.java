@@ -36,14 +36,25 @@ public class Tutorial extends Model {
     public void setDescription(String description) {
         this.description = description;
     }
-    public Technology getTechnology() {
+
+    public int getSteps_count() {
+        return steps_count;
+    }
+
+    public void setSteps_count(int steps_count) {
+        this.steps_count = steps_count;
+    }
+
+    public Technology getTutorial_technology() {
         return tutorial_technology;
     }
 
-    public void setTechnology(Technology technology) {
-        this.tutorial_technology = technology;
+    public void setTutorial_technology(Technology tutorial_technology) {
+        this.tutorial_technology = tutorial_technology;
     }
 
+    @Column(name = "steps_count", nullable = false)
+    private int steps_count = 0;
     @ManyToOne(optional = false)
     @JoinColumn(name = "Technologies", referencedColumnName = "id")
     @RestResource(exported = false)

@@ -2,10 +2,7 @@ package app.controllers;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import app.models.Model;
 import app.services.CrudService;
@@ -16,47 +13,37 @@ public abstract class CrudController<M extends Model, S extends CrudService<M, ?
     
     public abstract void setService(S service);
     public abstract Boolean isAuthorized(Long entityId, S service);
-    
-//    @RequestMapping(value="/create", method = RequestMethod.GET) //for testing
-    @RequestMapping(value="/create", method = RequestMethod.POST)
-    public M create(M object) {
+    @RequestMapping(method = RequestMethod.POST)
+    public  @ResponseBody M create(@RequestBody M object) {
         if(isAuthorized(object.getId(), service)) {
             return service.save(object);
         }
         logUnauthorizedAccess();
         return null;
     }
-    
-    @RequestMapping(value="/update", method = RequestMethod.POST)
-    public M update(M object) {
+    @RequestMapping(value="/{id}", method = RequestMethod.PUT)
+    public  @ResponseBody M update(@PathVariable("id") long id, @RequestBody M object) {
         if(isAuthorized(object.getId(), service)) {
-            return service.update(object);
+            return service.update(id,object);
         }
         logUnauthorizedAccess();
         return null;
     }
-    
-    @RequestMapping(value="/delete", method = RequestMethod.POST)
-    public Boolean delete(Long id) {
+    @RequestMapping(value="/{id}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public Boolean delete(@PathVariable("id") long id) {
         if(isAuthorized(id, service)) {
             return service.delete(id);
         }
         logUnauthorizedAccess();
         return null;
     }
-    
-    @RequestMapping(value="/get", method = RequestMethod.GET)
-    public @ResponseBody M get(Long id) {
-        if(isAuthorized(id, service)) {
-            return service.get(id);
-        }
-        logUnauthorizedAccess();
-        return null;
+    @RequestMapping(value="/{id}", method = RequestMethod.GET)
+    public @ResponseBody M get(@PathVariable("id") long id) {
+        return service.get(id);
     }
-    
-    
-    @RequestMapping(value="/json", method = RequestMethod.GET)
-    public @ResponseBody Iterable<M> json(ModelMap map) {
+    @RequestMapping(method = RequestMethod.GET)
+    public @ResponseBody Iterable<M> getAll(ModelMap map) {
         return service.getAll();
     }
     

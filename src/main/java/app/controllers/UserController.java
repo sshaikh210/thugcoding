@@ -67,9 +67,13 @@ public class UserController {
 
     @RequestMapping("/user/list")
     public String list(ModelMap map) {
-        Iterable<User> users = this.userRepository.findAll();
-        map.addAttribute("users", users);
-        return "user/list";
+        if(isAuthorized(userService)) {
+            Iterable<User> users = this.userRepository.findAll();
+            map.addAttribute("users", users);
+            return "user/list";
+        }
+        logUnauthorizedAccess();
+        return null;
     }
 
     @RequestMapping(value = "/user/register", method = RequestMethod.GET)
@@ -264,5 +268,12 @@ public class UserController {
         } else {
             return null;
         }
+    }
+    public Boolean isAuthorized( UserService service) {
+        return service.isAuthorized(service);
+
+    }
+    private void logUnauthorizedAccess() {
+        System.out.println("!!UN-AUTHORIZED ACCESS DETECTED!!");
     }
 }

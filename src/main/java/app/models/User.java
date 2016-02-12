@@ -1,8 +1,12 @@
 package app.models;
 
 import javax.persistence.*;
+
 import javax.validation.constraints.NotNull;
+
 import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.hibernate.validator.constraints.Email;
 
@@ -16,7 +20,7 @@ public class User {
     @NotNull
     @Size(min = 3, max = 100, message = "Username must at least 3 characters.")
     private String userName;
-    
+    @JsonIgnore
     @NotNull
     @Size(min = 3, max = 100, message = "Password must at least 3 characters.")
     private String password;
@@ -27,9 +31,8 @@ public class User {
     @Email(message = "Email address is not valid.")
     @NotNull
     private String email;
-    
+    @JsonIgnore
     private String token;
-    
     private String role = "ROLE_USER";
     
     private String firstName;
@@ -39,10 +42,12 @@ public class User {
     private String address;
     
     private String companyName;
-    
+    @JsonIgnore
     private String lastLogin;
     
     private String profilePicture;
+
+    private boolean active = true;
     
     public Long getId() {
         return id;
@@ -59,7 +64,7 @@ public class User {
     public void setUserName(String name) {
         this.userName = name;
     }
-
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
@@ -67,7 +72,7 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-
+    @JsonIgnore
     public String getConfirmPassword() {
         return confirmPassword;
     }
@@ -75,7 +80,7 @@ public class User {
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
     }
-
+    @JsonIgnore
     public String getToken() {
         return token;
     }
@@ -91,7 +96,7 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-
+    @JsonIgnore
     public String getRole() {
         return role;
     }
@@ -131,7 +136,7 @@ public class User {
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
     }
-
+    @JsonIgnore
     public String getLastLogin() {
         return lastLogin;
     }
@@ -151,8 +156,21 @@ public class User {
     public Boolean isAdmin() {
         return this.role.equals("ROLE_ADMIN");
     }
-    
+
+    @JsonIgnore
     public Boolean isMatchingPasswords() {
         return this.password.equals(this.confirmPassword);
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public boolean getActive(){
+        return this.active;
     }
 }

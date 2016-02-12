@@ -44,7 +44,7 @@ public class UserService implements UserDetailsService {
         if(user == null) {
             throw new UsernameNotFoundException(username);
         }
-        if(requireActivation && !user.getToken().equals("1")) {
+        if((requireActivation && !user.getToken().equals("1")) || !user.isActive() ) {
             Application.log.error("User [" + username + "] tried to login but is not activated");
             throw new UsernameNotFoundException(username + " has not been activated yet");
         }
@@ -88,7 +88,15 @@ public class UserService implements UserDetailsService {
     }
     
     public Boolean delete(Long id) {
-        this.repo.delete(id);
+        try {
+            User model=this.repo.findOne(id);
+            model.setActive(false);
+            this.repo.save(model);
+        }
+        catch(Exception e)
+        {
+            return false;
+        }
         return true;
     }
     
@@ -179,5 +187,10 @@ public class UserService implements UserDetailsService {
 
     public void updateProfilePicture(User user, String profilePicture) {
         this.repo.updateProfilePicture(user.getUserName(), profilePicture);
+    }
+    public Boolean isAuthorized( UserService service) {
+        if(getLoggedInUser().isAdmin())
+            return true;
+        return false;
     }
 }

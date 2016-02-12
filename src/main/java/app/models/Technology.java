@@ -1,5 +1,6 @@
 package app.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Cascade;
 
@@ -11,7 +12,7 @@ import java.util.List;
  * @author abdul.jabbar@octryx.com 2/9/2016.
  */
 @Entity
-@Table(name = "Tutorials")
+@Table(name = "Technologies")
 public class Technology extends Model {
     @Column(name = "name", nullable = false)
     private String name;
@@ -45,7 +46,6 @@ public class Technology extends Model {
 
     @Column(name = "tutorials_count", nullable = false)
     private int tutorials_count = 0;
-
     public synchronized List<User_Technology> getUser_technologies() {
         return user_technologies;
     }
@@ -56,13 +56,13 @@ public class Technology extends Model {
         for(User_Technology child : user_technologies)
         {
             // initializing the TestObj instance in Children class (Owner side) so that it is not a null and PK can be created
-            child.setTechnology(this);
+            child.setUser_technology(this);
         }
     }
 
     @OneToMany(mappedBy="user_technology", fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @Cascade({org.hibernate.annotations.CascadeType.ALL})
-    @JsonManagedReference
+   @JsonManagedReference
     private List<User_Technology> user_technologies= new ArrayList<User_Technology>();
 
     public List<Tutorial> getTutorials() {
@@ -74,7 +74,7 @@ public class Technology extends Model {
         for(Tutorial child : tutorials)
         {
             // initializing the TestObj instance in Children class (Owner side) so that it is not a null and PK can be created
-            child.setTechnology(this);
+            child.setTutorial_technology(this);
         }
     }
 

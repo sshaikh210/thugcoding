@@ -33,16 +33,6 @@ public class Step extends Model {
     @Column(name = "description", nullable = true)
     private String description;
 
-    public int getSteps_count() {
-        return steps_count;
-    }
-
-    public void setSteps_count(int steps_count) {
-        this.steps_count = steps_count;
-    }
-
-    @Column(name = "steps_count", nullable = false)
-    private int steps_count = 0;
 
     public Tutorial getTutorial() {
         return tutorial;

@@ -35,14 +35,22 @@ public abstract class CrudService<M extends app.models.Model, R extends CrudRepo
         return this.repo.findOne(id);
     }
 
-    public M update(M model) {
-        M updated = this.repo.findOne(model.getId());
+    public M update(Long id,M model) {
+        M updated = this.repo.findOne(id);
         updated = copy(model, updated);
         return this.repo.save(updated);
     }
 
     public Boolean delete(Long id) {
-        this.repo.delete(id);
+        try {
+            M model=this.repo.findOne(id);
+            model.setActive(false);
+            this.repo.save(model);
+        }
+        catch(Exception e)
+        {
+            return false;
+        }
         return true;
     }
 }
