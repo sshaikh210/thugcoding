@@ -96,7 +96,6 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-    @JsonIgnore
     public String getRole() {
         return role;
     }

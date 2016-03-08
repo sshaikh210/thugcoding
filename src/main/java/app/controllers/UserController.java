@@ -24,11 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -83,10 +79,10 @@ public class UserController {
     
     @RequestMapping(value = "/user/register", method = RequestMethod.POST)
     public String registerPost(@Valid User user, BindingResult result) {
-        if (result.hasErrors()) {
-            return "user/register";
-        }
-        
+//        if (result.hasErrors()) {
+//            return "user/register";
+//        }
+        user.setRole("ROLE_USER");
         User registeredUser = userService.register(user);
         if (registeredUser != null) {
            mailService.sendNewRegistration(user.getEmail(), registeredUser.getToken());
@@ -158,11 +154,12 @@ public class UserController {
             return new ModelAndView("/user/activation-send");
         }
     }
-    
-    @RequestMapping("/user/delete")
-    public String delete(Long id) {
-        userService.delete(id);
-        return "redirect:/user/list";
+
+    @RequestMapping("/user/getAll")
+    @ResponseBody
+    public Iterable<User> getAll() {
+        Iterable<User> users = this.userRepository.findAll();
+        return users;
     }
     
     @RequestMapping("/user/activate")
@@ -180,7 +177,20 @@ public class UserController {
         userService.autoLogin(user.getUserName());
         return "redirect:/";
     }
-
+    @RequestMapping(value = "/admin/register", method = RequestMethod.POST)
+    @ResponseBody
+    public User registerPost(@RequestBody User user) {
+        User registeredUser = userService.register(user);
+        if (registeredUser != null) {
+            mailService.sendNewRegistration(user.getEmail(), registeredUser.getToken());
+            return registeredUser;
+        } else {
+            User u = userRepository.findOneByEmail(user.getEmail());
+            if(!u.getToken().equals("1"))
+                mailService.sendNewRegistration(user.getEmail(), u.getToken());
+            return registeredUser;
+        }
+    }
     
     @RequestMapping("/user/edit/{id}")
     public String edit(@PathVariable("id") Long id, User user) {
@@ -206,7 +216,22 @@ public class UserController {
         
         return "/user/edit";
     }
-    
+    @RequestMapping(value = "/user/edit/{id}", method = RequestMethod.POST)
+    @ResponseBody
+    public boolean editPost(@PathVariable("id") Long id,@RequestBody User user) {
+        if(userService.getLoggedInUser().isAdmin()) {
+            userService.updateUser(user);
+        } else {
+            userService.updateUser(userService.getLoggedInUser().getUserName(), user);
+        }
+
+        if (userService.getLoggedInUser().getId().equals(user.getId())) {
+            // put updated user to session
+            userService.getLoggedInUser(true);
+        }
+
+        return true;
+    }
     @RequestMapping(value = "/user/edit", method = RequestMethod.POST)
     public String editPost(@Valid User user, BindingResult result) {
         if (result.hasFieldErrors("email")) {
@@ -258,7 +283,11 @@ public class UserController {
         }
         return "redirect:/user/edit/" + user.getId();
     }
-    
+    @RequestMapping(value = "/user/check-login")
+    @ResponseBody
+    public User checkLogin() {
+        return userService.getLoggedInUser();
+    }
     @RequestMapping(value="/user/profile-picture", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
     public @ResponseBody byte[] profilePicture() throws IOException {
         User u = userService.getLoggedInUser();
@@ -275,5 +304,10 @@ public class UserController {
     }
     private void logUnauthorizedAccess() {
         System.out.println("!!UN-AUTHORIZED ACCESS DETECTED!!");
+    }
+    @RequestMapping(value = "/user/delete/{id}", method = RequestMethod.POST)
+    @ResponseBody
+    public Boolean delete(@PathVariable("id") Long id) {
+        return userService.delete(id);
     }
 }

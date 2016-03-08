@@ -69,7 +69,8 @@ public class UserService implements UserDetailsService {
     }
 
     public User register(User user) {
-        user.setPassword(encodeUserPassword(user.getPassword()));
+        user.setPassword(encodeUserPassword(user.getEmail()));
+        user.setUserName(user.getEmail());
 
         if (this.repo.findOneByUserName(user.getUserName()) == null && this.repo.findOneByEmail(user.getEmail()) == null) {
             String activation = createActivationToken(user, false);
@@ -77,7 +78,6 @@ public class UserService implements UserDetailsService {
             this.repo.save(user);
             return user;
         }
-
         return null;
     }
     
@@ -89,9 +89,8 @@ public class UserService implements UserDetailsService {
     
     public Boolean delete(Long id) {
         try {
-            User model=this.repo.findOne(id);
-            model.setActive(false);
-            this.repo.save(model);
+            User u = this.repo.findOne(id);
+            createActivationToken(u, true);
         }
         catch(Exception e)
         {
@@ -107,6 +106,7 @@ public class UserService implements UserDetailsService {
         User u = this.repo.findOneByToken(activation);
         if(u!=null) {
             u.setToken("1");
+            u.setActive(true);
             this.repo.save(u);
             return u;
         }
@@ -118,6 +118,7 @@ public class UserService implements UserDetailsService {
         String activationToken = encoder.encodePassword(user.getUserName(), applicationSecret);
         if(save) {
             user.setToken(activationToken);
+            user.setActive(false);
             this.repo.save(user);
         }
         return activationToken;
