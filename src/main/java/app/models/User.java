@@ -47,7 +47,7 @@ public class User {
     
     private String profilePicture;
 
-    private boolean active = true;
+    private boolean active=false;
     
     public Long getId() {
         return id;

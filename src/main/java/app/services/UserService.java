@@ -69,7 +69,10 @@ public class UserService implements UserDetailsService {
     }
 
     public User register(User user) {
-        user.setPassword(encodeUserPassword(user.getEmail()));
+        if(user.getPassword() == null)
+            user.setPassword(encodeUserPassword(user.getEmail()));
+        else
+            user.setPassword(encodeUserPassword(user.getPassword()));
         user.setUserName(user.getEmail());
 
         if (this.repo.findOneByUserName(user.getUserName()) == null && this.repo.findOneByEmail(user.getEmail()) == null) {
